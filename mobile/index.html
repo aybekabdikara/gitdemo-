@@ -726,30 +726,49 @@ function toggleDictation(btn, el){
     el.focus();
     return;
   }
-  recog = new SR();
-  recog.lang="ru-RU"; recog.continuous=true; recog.interimResults=true;
   const base = el.value? el.value.replace(/\s+$/,"")+" " : "";
   let finalTxt="";
-  recog.onresult = ev=>{
-    let interim="";
-    for(let i=ev.resultIndex;i<ev.results.length;i++){
-      const r=ev.results[i];
-      if(r.isFinal) finalTxt += r[0].transcript;
-      else interim += r[0].transcript;
-    }
-    el.value = base + finalTxt + interim;
-    el.dispatchEvent(new Event("input",{bubbles:true}));
-  };
-  recog.onerror = ev=>{
-    note(ev.error==="not-allowed" ? T("toastDictateNoMic")
-        : ev.error==="no-speech" ? T("toastDictateNoSpeech")
-        : T("toastDictateErr")+ev.error+")");
-    stopRec();
-  };
-  recog.onend = ()=>stopRec();
+  let retrying=false, retries=0;
+  const MAX_RETRIES=2; // iOS Safari often aborts the first start() while the mic session is still spinning up
+
+  function attachAndStart(){
+    recog = new SR();
+    recog.lang="ru-RU"; recog.continuous=true; recog.interimResults=true;
+    recog.onresult = ev=>{
+      let interim="";
+      for(let i=ev.resultIndex;i<ev.results.length;i++){
+        const r=ev.results[i];
+        if(r.isFinal) finalTxt += r[0].transcript;
+        else interim += r[0].transcript;
+      }
+      el.value = base + finalTxt + interim;
+      el.dispatchEvent(new Event("input",{bubbles:true}));
+    };
+    recog.onerror = ev=>{
+      if(ev.error==="aborted" && retries<MAX_RETRIES){
+        retrying=true; retries++;
+        return; // onend fires right after; let it trigger the restart
+      }
+      retrying=false;
+      note(ev.error==="not-allowed" ? T("toastDictateNoMic")
+          : ev.error==="no-speech" ? T("toastDictateNoSpeech")
+          : T("toastDictateErr")+ev.error+")");
+      stopRec();
+    };
+    recog.onend = ()=>{
+      if(retrying && recActive){
+        retrying=false;
+        setTimeout(()=>{ if(recActive){ try{ attachAndStart(); }catch(e){ stopRec(); } } }, 250);
+        return;
+      }
+      stopRec();
+    };
+    recog.start();
+  }
+
   recActive=true; recBtn=btn;
   btn.classList.add("rec"); btn.innerHTML="⏺ Запись… нажмите, чтобы остановить";
-  try{ recog.start(); note(T("toastDictateSpeak")); }catch(err){ stopRec(); }
+  try{ attachAndStart(); note(T("toastDictateSpeak")); }catch(err){ stopRec(); }
 }
 
 /* ================= TOAST ================= */
