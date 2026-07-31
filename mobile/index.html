@@ -22,7 +22,7 @@ body{
   padding-bottom:env(safe-area-inset-bottom);
 }
 .hazard{height:12px; background:linear-gradient(to bottom, var(--steel) 0 50%, var(--accent) 50% 100%);}
-header{background:#fff; padding:22px 18px 18px; border-bottom:3px solid var(--accent); text-align:center;}
+header{background:#fff; padding:calc(22px + env(safe-area-inset-top)) 18px 18px; border-bottom:3px solid var(--accent); text-align:center;}
 header .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); font-weight:700;}
 header h1{margin:8px 0 4px; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--steel);}
 header p{margin:0; font-size:13.5px; color:var(--muted);}
