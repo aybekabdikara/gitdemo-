@@ -21,11 +21,16 @@ body{
   min-height:100dvh;
   padding-bottom:env(safe-area-inset-bottom);
 }
-.hazard{height:12px; background:linear-gradient(to bottom, var(--steel) 0 50%, var(--accent) 50% 100%);}
-header{background:#fff; padding:calc(22px + env(safe-area-inset-top)) 18px 18px; border-bottom:3px solid var(--accent); text-align:center;}
+.hazard{height:calc(12px + env(safe-area-inset-top)); background:linear-gradient(to bottom, var(--steel) 0 50%, var(--accent) 50% 100%);}
+header{background:#fff; padding:22px 18px 18px; border-bottom:3px solid var(--accent); text-align:center;}
+header .head-row{display:flex; align-items:flex-start; gap:10px; max-width:520px; margin:0 auto;}
+header .head-txt{flex:1; min-width:0;}
 header .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); font-weight:700;}
 header h1{margin:8px 0 4px; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--steel);}
 header p{margin:0; font-size:13.5px; color:var(--muted);}
+.lang-switch{flex:0 0 auto; display:flex; border:1.5px solid var(--line); border-radius:9px; overflow:hidden; margin-top:2px;}
+.lang-switch button{border:none; background:#fff; color:var(--muted); font-weight:800; font-size:13px; letter-spacing:.04em; padding:8px 12px; cursor:pointer; font-family:inherit;}
+.lang-switch button.on{background:var(--steel); color:#fff;}
 main{max-width:520px; margin:0 auto; padding:22px 16px 40px; display:flex; flex-direction:column; gap:14px;}
 .pick{
   display:flex; align-items:center; gap:14px; background:var(--card);
@@ -51,17 +56,25 @@ main{max-width:520px; margin:0 auto; padding:22px 16px 40px; display:flex; flex-
 
 <div class="hazard"></div>
 <header>
-  <div class="eyebrow">Shell Lubricants</div>
-  <h1>Полевые аудиты смазки</h1>
-  <p>Выберите тип оборудования, чтобы начать аудит</p>
+  <div class="head-row">
+    <div class="head-txt">
+      <div class="eyebrow" id="uiEyebrow">Shell Lubricants</div>
+      <h1 id="uiH1">Полевые аудиты смазки</h1>
+      <p id="uiIntro">Выберите тип оборудования, чтобы начать аудит</p>
+    </div>
+    <div class="lang-switch" id="langSwitch">
+      <button type="button" data-lang="ru" class="on">RU</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
 </header>
 
 <main>
   <a class="pick" href="./mill/">
     <span class="ico">⚙️</span>
     <span class="txt">
-      <b>Аудит мельниц</b>
-      <span>Система смазки открытой шестерни · венец и привод · температуры и вибрация</span>
+      <b id="uiMillTitle">Аудит мельниц</b>
+      <span id="uiMillDesc">Система смазки открытой шестерни · венец и привод · температуры и вибрация</span>
     </span>
     <span class="arrow">›</span>
   </a>
@@ -69,8 +82,8 @@ main{max-width:520px; margin:0 auto; padding:22px 16px 40px; display:flex; flex-
   <a class="pick" href="./excavator/">
     <span class="ico">🚜</span>
     <span class="txt">
-      <b>Аудит экскаваторов</b>
-      <span>Централизованная смазка · насос · система на поворотном круге</span>
+      <b id="uiExcTitle">Аудит экскаваторов</b>
+      <span id="uiExcDesc">Централизованная смазка · насос · система на поворотном круге</span>
     </span>
     <span class="arrow">›</span>
   </a>
@@ -78,14 +91,60 @@ main{max-width:520px; margin:0 auto; padding:22px 16px 40px; display:flex; flex-
   <a class="pick" href="./assessment/">
     <span class="ico">📋</span>
     <span class="txt">
-      <b>Оценка объекта LubeAdvisor</b>
-      <span>91 пункт по 8 темам · хранение, HSSE, обучение, мониторинг состояния масла</span>
+      <b id="uiAssTitle">Оценка объекта LubeAdvisor</b>
+      <span id="uiAssDesc">91 пункт по 8 темам · хранение, HSSE, обучение, мониторинг состояния масла</span>
     </span>
     <span class="arrow">›</span>
   </a>
 
-  <p class="hint">Откройте нужный аудит в Safari и добавьте его на главный экран (Поделиться → «На экран “Домой”») — так у каждого аудита будет свой ярлык.</p>
+  <p class="hint" id="uiHint">Откройте нужный аудит в Safari и добавьте его на главный экран (Поделиться → «На экран “Домой”») — так у каждого аудита будет свой ярлык.</p>
 </main>
+
+<script>
+const UI = {
+  eyebrow:{ru:"Shell Lubricants", en:"Shell Lubricants"},
+  h1:{ru:"Полевые аудиты смазки", en:"Field Lubrication Audits"},
+  intro:{ru:"Выберите тип оборудования, чтобы начать аудит", en:"Choose the equipment type to start an audit"},
+  millTitle:{ru:"Аудит мельниц", en:"Mill Audit"},
+  millDesc:{ru:"Система смазки открытой шестерни · венец и привод · температуры и вибрация",
+            en:"Open gear lubrication system · girth gear & pinion · temperatures & vibration"},
+  excTitle:{ru:"Аудит экскаваторов", en:"Excavator Audit"},
+  excDesc:{ru:"Централизованная смазка · насос · система на поворотном круге",
+           en:"Centralized lubrication · pump · slew ring system"},
+  assTitle:{ru:"Оценка объекта LubeAdvisor", en:"LubeAdvisor Site Assessment"},
+  assDesc:{ru:"91 пункт по 8 темам · хранение, HSSE, обучение, мониторинг состояния масла",
+           en:"91 items across 8 categories · storage, HSSE, training, oil condition monitoring"},
+  hint:{ru:"Откройте нужный аудит в Safari и добавьте его на главный экран (Поделиться → «На экран “Домой”») — так у каждого аудита будет свой ярлык.",
+        en:"Open the audit you need in Safari and add it to your home screen (Share → “Add to Home Screen”) — that way each audit gets its own icon."},
+};
+const LANG_KEY = "shell_audits_landing_lang";
+let LANG = "ru";
+try{ const sv=localStorage.getItem(LANG_KEY); if(sv==="ru"||sv==="en") LANG=sv; }catch(e){}
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  const map = {
+    uiEyebrow:"eyebrow", uiH1:"h1", uiIntro:"intro",
+    uiMillTitle:"millTitle", uiMillDesc:"millDesc",
+    uiExcTitle:"excTitle", uiExcDesc:"excDesc",
+    uiAssTitle:"assTitle", uiAssDesc:"assDesc",
+    uiHint:"hint",
+  };
+  for(const [id,key] of Object.entries(map)){
+    const el=document.getElementById(id);
+    if(el) el.textContent = UI[key][LANG];
+  }
+  document.querySelectorAll("#langSwitch button").forEach(b=>b.classList.toggle("on", b.dataset.lang===LANG));
+}
+document.getElementById("langSwitch").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-lang]");
+  if(!b || b.dataset.lang===LANG) return;
+  LANG = b.dataset.lang;
+  try{ localStorage.setItem(LANG_KEY, LANG); }catch(e){}
+  applyLang();
+});
+applyLang();
+</script>
 
 </body>
 </html>
