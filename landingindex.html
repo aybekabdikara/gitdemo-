@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Аудиты смазки — Shell</title>
+<style>
+:root{
+  --paper:#F6F6F5; --card:#FFFFFF; --ink:#404040; --muted:#767676;
+  --line:#E1E1E1; --steel:#DD1D21; --accent:#FBCE07; --accent-ink:#453800;
+  --radius:16px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0;}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.45;
+  min-height:100dvh;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.hazard{height:12px; background:linear-gradient(to bottom, var(--steel) 0 50%, var(--accent) 50% 100%);}
+header{background:#fff; padding:22px 18px 18px; border-bottom:3px solid var(--accent); text-align:center;}
+header .eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); font-weight:700;}
+header h1{margin:8px 0 4px; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--steel);}
+header p{margin:0; font-size:13.5px; color:var(--muted);}
+main{max-width:520px; margin:0 auto; padding:22px 16px 40px; display:flex; flex-direction:column; gap:14px;}
+.pick{
+  display:flex; align-items:center; gap:14px; background:var(--card);
+  border:1px solid var(--line); border-radius:var(--radius); padding:18px 16px;
+  text-decoration:none; color:inherit; box-shadow:0 1px 2px rgba(20,20,20,.04);
+}
+.pick:active{transform:scale(.99);}
+.pick .ico{
+  flex:0 0 auto; width:52px; height:52px; border-radius:14px; background:var(--paper);
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+  border:1px solid var(--line);
+}
+.pick .txt{flex:1; min-width:0;}
+.pick .txt b{display:block; font-size:17px; font-weight:800; color:var(--ink); margin-bottom:2px;}
+.pick .txt span{display:block; font-size:13px; color:var(--muted); line-height:1.4;}
+.pick .arrow{flex:0 0 auto; font-size:20px; color:var(--muted);}
+.hint{
+  margin-top:6px; font-size:12.5px; color:var(--muted); text-align:center; padding:0 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="hazard"></div>
+<header>
+  <div class="eyebrow">Shell Lubricants</div>
+  <h1>Полевые аудиты смазки</h1>
+  <p>Выберите тип оборудования, чтобы начать аудит</p>
+</header>
+
+<main>
+  <a class="pick" href="./mill/">
+    <span class="ico">⚙️</span>
+    <span class="txt">
+      <b>Аудит мельниц</b>
+      <span>Система смазки открытой шестерни · венец и привод · температуры и вибрация</span>
+    </span>
+    <span class="arrow">›</span>
+  </a>
+
+  <a class="pick" href="./excavator/">
+    <span class="ico">🚜</span>
+    <span class="txt">
+      <b>Аудит экскаваторов</b>
+      <span>Централизованная смазка · насос · система на поворотном круге</span>
+    </span>
+    <span class="arrow">›</span>
+  </a>
+
+  <p class="hint">Откройте нужный аудит в Safari и добавьте его на главный экран (Поделиться → «На экран “Домой”») — так у каждого аудита будет свой ярлык.</p>
+</main>
+
+</body>
+</html>
