@@ -39,7 +39,7 @@ h1, h2, h3 { margin: 0; font-family: -apple-system, "Segoe UI", "Century Gothic"
 button { font-family: inherit; }
 textarea, input { font-family: inherit; }
 
-.app { max-width: 760px; margin: 0 auto; padding-bottom: 110px; }
+.app { max-width: 760px; margin: 0 auto; padding-bottom: 170px; }
 
 /* ---------- Header ---------- */
 .topbar {
@@ -252,6 +252,12 @@ textarea, input { font-family: inherit; }
   background: none; border: none; color: var(--muted); font-size: 11.5px; text-decoration: underline;
   cursor: pointer; padding: 4px;
 }
+.btn-navlink {
+  flex: 1; display: block; text-align: center; background: #fff; color: var(--navy);
+  border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px;
+  font-size: 14px; font-weight: 800; cursor: pointer; text-decoration: none;
+}
+.btn-navlink:active { background: var(--bg); }
 .bottom-links { display:flex; justify-content: center; gap: 16px; padding: 8px 0 2px; }
 
 /* ---------- Toast ---------- */
@@ -448,6 +454,9 @@ textarea, input { font-family: inherit; }
   <div class="action-bar-inner">
     <button type="button" class="btn-secondary" id="newReportBtn" data-i18n="btnNew">Новый отчёт</button>
     <button type="button" class="btn-primary" id="saveDownloadBtn" data-i18n="btnSave">Сохранить и скачать отчёт</button>
+  </div>
+  <div class="action-bar-inner" style="margin-top:8px">
+    <a href="../grease-consumption/" class="btn-navlink" data-i18n="btnGreaseAudit">Аудит расхода смазки (инжекторы) →</a>
   </div>
 </div>
 
@@ -24090,6 +24099,7 @@ var __async = (__this, __arguments, generator) => {
       block_slewRing: "Поворотный круг", block_boom: "Стрела", block_arm: "Рукоять", block_bucket: "Ковш",
       btnSave: "Сохранить и скачать отчёт", btnSaving: "Формирую отчёт…", btnNew: "Новый отчёт",
       btnExportJson: "Экспорт JSON (бэкап)", btnImportJson: "Импорт JSON",
+      btnGreaseAudit: "Аудит расхода смазки (инжекторы) →",
       toastNewReport: "Новый отчёт создан", toastJsonImported: "JSON импортирован", toastJsonImportFailed: "Не удалось прочитать файл",
       toastSaved: "Отчёт скачан и сохранён", toastError: "Ошибка при создании отчёта: ", toastSlotOpened: "Открыт: ",
       confirmNewReport: "Очистить текущую форму и начать новый отчёт? Черновик будет заменён.",
@@ -24132,6 +24142,7 @@ var __async = (__this, __arguments, generator) => {
       block_slewRing: "Slew ring", block_boom: "Boom", block_arm: "Arm", block_bucket: "Bucket",
       btnSave: "Save & download report", btnSaving: "Generating report…", btnNew: "New report",
       btnExportJson: "Export JSON (backup)", btnImportJson: "Import JSON",
+      btnGreaseAudit: "Grease Consumption Audit (injectors) →",
       toastNewReport: "New report created", toastJsonImported: "JSON imported", toastJsonImportFailed: "Could not read file",
       toastSaved: "Report downloaded and saved", toastError: "Error creating report: ", toastSlotOpened: "Opened: ",
       confirmNewReport: "Clear the current form and start a new report? The draft will be replaced.",
