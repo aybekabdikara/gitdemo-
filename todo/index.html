@@ -234,6 +234,27 @@
   .done-empty .mark { font-family: "Fraunces", Georgia, serif; font-style: italic; font-size: 26px; color: var(--accent); margin-bottom: 10px; }
   .done-empty p { margin: 0; font-size: 14px; line-height: 1.5; }
 
+  .repeat-toggle { width: 100%; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-strong); background: var(--surface-2); border-radius: 11px; padding: 11px 13px; font: inherit; font-size: 15px; color: var(--ink); cursor: pointer; transition: .16s var(--ease); }
+  .repeat-toggle .rt-icon { display: grid; place-items: center; width: 20px; height: 20px; color: var(--muted); flex: none; }
+  .repeat-toggle .rt-icon svg { width: 18px; height: 18px; }
+  .repeat-toggle .rt-text { flex: 1; text-align: left; }
+  .repeat-toggle .rt-state { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); }
+  .repeat-toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-tint); }
+  .repeat-toggle[aria-pressed="true"] .rt-icon { color: var(--accent); }
+  .repeat-toggle[aria-pressed="true"] .rt-state { color: var(--accent-ink); }
+  .weekdays { display: none; flex-direction: column; gap: 9px; margin-top: 8px; }
+  .weekdays.show { display: flex; }
+  .wd-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .wd { border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--muted); border-radius: 9px; padding: 10px 0; font: inherit; font-size: 13px; cursor: pointer; transition: .14s var(--ease); }
+  .wd[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-tint); color: var(--accent-ink); font-weight: 500; }
+  .wd-quick { display: flex; gap: 14px; padding-left: 2px; }
+  .wd-quick button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 12.5px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); padding: 0; }
+  .wd-quick button:hover { color: var(--accent-ink); }
+  .wd-quick #q-none:hover { color: var(--danger); }
+  .chip-repeat { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: .02em; color: var(--accent-ink); background: var(--accent-tint); border: 1px solid var(--accent); padding: 1px 6px; border-radius: 999px; }
+  .chip-repeat svg { width: 10px; height: 10px; }
+  .chip-repeat.today { color: var(--faint); background: var(--surface); border-color: var(--line); }
+
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
@@ -378,6 +399,29 @@
       <button class="date-clear" id="e-due-clear" type="button">Убрать</button>
     </div>
 
+    <div class="field-label">Повтор</div>
+    <button class="repeat-toggle" id="e-repeat" type="button" aria-pressed="false">
+      <span class="rt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
+      <span class="rt-text">Повторять по дням</span>
+      <span class="rt-state">выкл</span>
+    </button>
+    <div class="weekdays" id="e-days">
+      <div class="wd-row">
+        <button type="button" class="wd" data-d="1">Пн</button>
+        <button type="button" class="wd" data-d="2">Вт</button>
+        <button type="button" class="wd" data-d="3">Ср</button>
+        <button type="button" class="wd" data-d="4">Чт</button>
+        <button type="button" class="wd" data-d="5">Пт</button>
+        <button type="button" class="wd" data-d="6">Сб</button>
+        <button type="button" class="wd" data-d="0">Вс</button>
+      </div>
+      <div class="wd-quick">
+        <button type="button" id="q-all">Каждый день</button>
+        <button type="button" id="q-work">Будни</button>
+        <button type="button" id="q-none">Снять все</button>
+      </div>
+    </div>
+
     <div class="sheet-actions">
       <button class="btn btn-del" id="e-del" type="button">Удалить</button>
       <button class="btn btn-primary" id="e-save" type="button">Готово</button>
@@ -490,6 +534,19 @@
   function svgGrip() { return '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>'; }
   function svgTrash() { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7"/></svg>'; }
   function doneElapsed(t) { if (!t.doneAt) return Infinity; var d = Date.parse(t.doneAt); return isNaN(d) ? Infinity : (Date.now() - d); }
+  function svgRepeat() { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>'; }
+  var WD_SHORT = { 0: "Вс", 1: "Пн", 2: "Вт", 3: "Ср", 4: "Чт", 5: "Пт", 6: "Сб" };
+  function isRecurring(t) { return t.repeat === "week" || t.repeat === "daily"; }
+  function getDays(t) { if (t.repeat === "daily") return [0,1,2,3,4,5,6]; return Array.isArray(t.days) ? t.days : []; }
+  function isDueToday(t) { return isRecurring(t) && getDays(t).indexOf(new Date().getDay()) !== -1; }
+  function isDone(t) { return isRecurring(t) ? (t.lastDone === todayStr()) : !!t.done; }
+  function repeatLabel(t) {
+    var days = getDays(t);
+    if (days.length >= 7) return "каждый день";
+    if (days.length === 5 && [1,2,3,4,5].every(function (d) { return days.indexOf(d) !== -1; })) return "по будням";
+    if (!days.length) return "повтор";
+    return [1,2,3,4,5,6,0].filter(function (d) { return days.indexOf(d) !== -1; }).map(function (d) { return WD_SHORT[d]; }).join(" · ");
+  }
   var fmtDT = null; try { fmtDT = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) {}
   function doneWhen(iso) { if (!iso) return ""; var d = new Date(iso); return isNaN(d) ? "" : (fmtDT ? fmtDT.format(d) : iso); }
   var QUAD_NAME = { "1,1": "Сделать сейчас", "0,1": "Запланировать", "1,0": "Делегировать", "0,0": "Потом" };
@@ -501,11 +558,13 @@
       ul.innerHTML = "";
       var here = tasks.filter(function (t) {
         if (String(t.urgent) !== u || String(t.important) !== i) return false;
+        if (isRecurring(t)) return isDueToday(t);   // повторяющаяся видна только в назначенные дни недели
         if (!t.done) return true;
         return doneElapsed(t) < LINGER_MS;   // выполненная задача ещё «отлёживается» 15 минут
       });
       here.sort(function (a, b) {
-        if (a.done !== b.done) return a.done ? 1 : -1;
+        var ad = isDone(a), bd = isDone(b);
+        if (ad !== bd) return ad ? 1 : -1;
         var da = daysTo(a.due), dbb = daysTo(b.due);
         if (da === null && dbb === null) return 0;
         if (da === null) return 1; if (dbb === null) return -1; return da - dbb;
@@ -514,12 +573,12 @@
       if (!here.length) { var e = document.createElement("li"); e.className = "quad-empty"; e.textContent = "перетащите сюда"; ul.appendChild(e); return; }
       here.forEach(function (t) {
         var li = document.createElement("li");
-        li.className = "chip" + (t.done ? " done" : "");
+        li.className = "chip" + (isDone(t) ? " done" : "");
         li.dataset.id = t.id;
 
         var box = document.createElement("button");
         box.className = "chip-box"; box.type = "button";
-        box.setAttribute("aria-label", t.done ? "Снять отметку" : "Выполнено");
+        box.setAttribute("aria-label", isDone(t) ? "Снять отметку" : "Выполнено");
         box.innerHTML = svgCheck();
         box.addEventListener("click", function (ev) { ev.stopPropagation(); toggle(t.id); });
 
@@ -527,7 +586,13 @@
         body.className = "chip-body";
         var tx = document.createElement("div"); tx.className = "chip-text"; tx.textContent = t.text;
         body.appendChild(tx);
-        if (t.done) {
+        if (isRecurring(t)) {
+          var rp = document.createElement("span");
+          rp.className = "chip-repeat" + (isDone(t) ? " today" : "");
+          rp.innerHTML = svgRepeat() + "<span></span>";
+          rp.lastChild.textContent = isDone(t) ? "сделано сегодня" : repeatLabel(t);
+          body.appendChild(rp);
+        } else if (t.done) {
           var mins = Math.max(1, Math.ceil((LINGER_MS - doneElapsed(t)) / 60000));
           var fp = document.createElement("span");
           fp.className = "chip-fade-pill";
@@ -550,20 +615,28 @@
       });
     });
 
-    var total = tasks.length;
-    var done = tasks.filter(function (t) { return t.done; }).length;
-    var over = tasks.filter(function (t) { return !t.done && daysTo(t.due) !== null && daysTo(t.due) < 0; }).length;
-    var soon = tasks.filter(function (t) { var d = daysTo(t.due); return !t.done && d !== null && d >= 0 && d <= 3; }).length;
+    var active = tasks.filter(function (t) { return isRecurring(t) ? (isDueToday(t) && !isDone(t)) : !t.done; }).length;
+    var done = tasks.filter(function (t) { return isRecurring(t) ? (isDueToday(t) && isDone(t)) : t.done; }).length;
+    var over = tasks.filter(function (t) { return !isRecurring(t) && !isDone(t) && daysTo(t.due) !== null && daysTo(t.due) < 0; }).length;
+    var soon = tasks.filter(function (t) { if (isRecurring(t)) return false; var d = daysTo(t.due); return !isDone(t) && d !== null && d >= 0 && d <= 3; }).length;
     var parts = [];
-    parts.push("<span><b>" + (total - done) + "</b> активных</span>");
+    parts.push("<span><b>" + active + "</b> активных</span>");
     parts.push('<span class="dot">·</span><span><b>' + done + "</b> готово</span>");
     if (over) parts.push('<span class="dot">·</span><span class="over"><b>' + over + "</b> просрочено</span>");
     if (soon) parts.push('<span class="dot">·</span><span><b>' + soon + "</b> скоро</span>");
     summaryEl.innerHTML = parts.join("");
+    var total = tasks.length;
     countEl.textContent = total === 1 ? "1 задача" : (total + " задач");
   }
 
-  function toggle(id) { tasks.forEach(function (t) { if (t.id === id) { t.done = !t.done; t.doneAt = t.done ? nowISO() : ""; } }); commitChange(); }
+  function toggle(id) {
+    tasks.forEach(function (t) {
+      if (t.id !== id) return;
+      if (isRecurring(t)) { t.lastDone = (t.lastDone === todayStr()) ? "" : todayStr(); }
+      else { t.done = !t.done; t.doneAt = t.done ? nowISO() : ""; }
+    });
+    commitChange();
+  }
   function restore(id) { tasks.forEach(function (t) { if (t.id === id) { t.done = false; t.doneAt = ""; } }); commitChange(); }
   function remove(id) { tasks = tasks.filter(function (t) { return t.id !== id; }); commitChange(); }
 
@@ -572,7 +645,7 @@
   var doneBadge = document.getElementById("done-badge");
   var doneClearBtn = document.getElementById("done-clear");
   function renderDone() {
-    var doneTasks = tasks.filter(function (t) { return t.done; });
+    var doneTasks = tasks.filter(function (t) { return t.done && !isRecurring(t); });
     doneTasks.sort(function (a, b) { return (b.doneAt || "").localeCompare(a.doneAt || ""); });
     if (doneTasks.length) { doneBadge.hidden = false; doneBadge.textContent = doneTasks.length; } else doneBadge.hidden = true;
     doneClearBtn.hidden = doneTasks.length === 0;
@@ -667,11 +740,35 @@
   var eDueClear = document.getElementById("e-due-clear");
   var eSave = document.getElementById("e-save");
   var eDel = document.getElementById("e-del");
+  var eRepeat = document.getElementById("e-repeat");
+  var eDays = document.getElementById("e-days");
+  var wdBtns = Array.prototype.slice.call(eDays.querySelectorAll(".wd"));
   var pickBtns = Array.prototype.slice.call(document.querySelectorAll("#pick button"));
-  var editingId = null, editorOpen = false, draftImp = 1, draftUrg = 1;
+  var editingId = null, editorOpen = false, draftImp = 1, draftUrg = 1, draftRepeat = "", draftDays = [];
 
   function paintPick() { pickBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(Number(b.dataset.urg) === draftUrg && Number(b.dataset.imp) === draftImp)); }); }
   pickBtns.forEach(function (b) { b.addEventListener("click", function () { draftUrg = Number(b.dataset.urg); draftImp = Number(b.dataset.imp); paintPick(); }); });
+
+  function paintRepeat() {
+    var on = draftRepeat === "week";
+    eRepeat.setAttribute("aria-pressed", String(on));
+    eRepeat.querySelector(".rt-state").textContent = on ? "вкл" : "выкл";
+    eDays.classList.toggle("show", on);
+    wdBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(draftDays.indexOf(Number(b.dataset.d)) !== -1)); });
+  }
+  eRepeat.addEventListener("click", function () {
+    if (draftRepeat === "week") { draftRepeat = ""; }
+    else { draftRepeat = "week"; if (!draftDays.length) draftDays = [0,1,2,3,4,5,6]; }
+    paintRepeat();
+  });
+  wdBtns.forEach(function (b) { b.addEventListener("click", function () {
+    var d = Number(b.dataset.d), k = draftDays.indexOf(d);
+    if (k === -1) draftDays.push(d); else draftDays.splice(k, 1);
+    paintRepeat();
+  }); });
+  document.getElementById("q-all").addEventListener("click", function () { draftDays = [0,1,2,3,4,5,6]; paintRepeat(); });
+  document.getElementById("q-work").addEventListener("click", function () { draftDays = [1,2,3,4,5]; paintRepeat(); });
+  document.getElementById("q-none").addEventListener("click", function () { draftDays = []; paintRepeat(); });
   eDueClear.addEventListener("click", function () { eDue.value = ""; });
 
   function openEditor(id) {
@@ -679,6 +776,7 @@
     editingId = id; editorOpen = true;
     eText.value = t.text; eDue.value = t.due || "";
     draftImp = t.important; draftUrg = t.urgent; paintPick();
+    draftRepeat = isRecurring(t) ? "week" : ""; draftDays = getDays(t).slice(); paintRepeat();
     scrim.classList.add("open");
     setTimeout(function () { if (!t.text) eText.focus(); }, 260);
   }
@@ -687,7 +785,13 @@
     if (editingId === null) { closeAndPull(); return; }
     var text = eText.value.trim();
     if (!text) { tasks = tasks.filter(function (t) { return t.id !== editingId; }); }
-    else { tasks.forEach(function (t) { if (t.id === editingId) { t.text = text; t.important = draftImp; t.urgent = draftUrg; t.due = eDue.value || ""; } }); }
+    else { tasks.forEach(function (t) { if (t.id === editingId) {
+      t.text = text; t.important = draftImp; t.urgent = draftUrg; t.due = eDue.value || "";
+      var on = draftRepeat === "week" && draftDays.length > 0;
+      t.repeat = on ? "week" : "";
+      t.days = on ? draftDays.slice() : [];
+      if (on) { t.done = false; t.doneAt = ""; }   // повторяющиеся не уходят в завершённые
+    } }); }
     editingId = null; editorOpen = false; scrim.classList.remove("open");
     commitChange();
   }
@@ -706,7 +810,7 @@
 
   /* single add button */
   document.getElementById("add-fab").addEventListener("click", function () {
-    var t = { id: uid(), text: "", urgent: 1, important: 1, due: "", done: false };
+    var t = { id: uid(), text: "", urgent: 1, important: 1, due: "", done: false, repeat: "", days: [] };
     tasks.push(t); openEditor(t.id);
   });
 
